@@ -1,11 +1,13 @@
 package com.ch.web.gateway.session;
 
+import java.io.Serializable;
+
 /**
  * 用户会话
  *
  * @author caich
  **/
-public class UserSession<T> {
+public class UserSession<T> implements Serializable {
 
     /**
      * 会话id 用于确定数据唯一性

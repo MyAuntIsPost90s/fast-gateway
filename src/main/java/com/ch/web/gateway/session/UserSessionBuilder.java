@@ -28,6 +28,17 @@ public class UserSessionBuilder {
     }
 
     /**
+     * 构造会话
+     *
+     * @param data          用户数据
+     * @param accessToken   token
+     * @return
+     **/
+    public static <T> UserSession<T> build(String sessionId, T data, String accessToken) throws Exception {
+        return new UserSession<>(accessToken, sessionId, data);
+    }
+
+    /**
      * 从缓存种获取策略实现
      *
      * @param strategyClass 策略类

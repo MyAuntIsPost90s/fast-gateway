@@ -15,7 +15,7 @@ public class UserSessionManager {
 
     }
 
-    public static UserSessionManager getInstance() {
+    public static UserSessionManager get() {
         if (manager == null) {
             synchronized (UserSessionManager.class) {
                 if (manager == null) {

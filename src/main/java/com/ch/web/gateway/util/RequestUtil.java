@@ -1,7 +1,14 @@
 package com.ch.web.gateway.util;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * http请求工具类
@@ -22,7 +29,7 @@ public class RequestUtil {
         String accessToken = request.getHeader(ACCESS_TOKEN);
         if (accessToken == null || accessToken.isEmpty()) {
             Cookie[] cookies = request.getCookies();
-            if(cookies != null) {
+            if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(ACCESS_TOKEN)) {
                         accessToken = cookie.getValue();
@@ -43,7 +50,7 @@ public class RequestUtil {
      * @param
      * @return
      **/
-    public static Object convertByClass(String str, Class<?> objectClass) {
+    public static Object convertByClass(String str, Field field, Class<?> objectClass) {
         if (str == null) {
             return null;
         }
@@ -70,6 +77,20 @@ public class RequestUtil {
         }
         if (objectClass == Character.class) {
             return Float.valueOf(str);
+        }
+        if (objectClass == BigDecimal.class) {
+            return new BigDecimal(str);
+        }
+        if (objectClass == Date.class) {
+            DateTimeFormat dateTimeFormat = field.getAnnotation(DateTimeFormat.class);
+            if (dateTimeFormat == null) {
+                throw new IllegalArgumentException(objectClass.toString() + " is date type, need set DateTimeFormat");
+            }
+            try {
+                return new SimpleDateFormat(dateTimeFormat.pattern()).parse(str);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
         throw new IllegalArgumentException(objectClass.toString() + " not support convert");
     }

@@ -1,7 +1,6 @@
 package com.ch.web.gateway.request;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -111,6 +110,13 @@ public class RequestFile {
      * @throws IOException
      */
     public void saveFile(String path, MultipartFile file) throws IllegalArgumentException, IOException {
-        file.transferTo(new File(path));
+        try (FileOutputStream outputStream = new FileOutputStream(new File(path));
+             InputStream inputStream = file.getInputStream()) {
+            int len = 0;
+            byte[] buff = new byte[1024 * 1024];
+            while ((len = inputStream.read(buff)) != -1) {
+                outputStream.write(buff, 0, len);
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ch.web.gateway.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ch.web.gateway.boot.FastGatewayContext;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ public class ResponseUtil {
             json = (String) data;
         } else {
             if (data != null) {
-                json = JSON.toJSONString(data);
+                json = JSON.toJSONString(data, SerializerFeature.DisableCircularReferenceDetect);
             }
         }
         if (response.getContentType() == null || response.getContentType().isEmpty()) {

@@ -124,7 +124,7 @@ public class RequestHolder {
      * @return
      **/
     public <T> T getParam(String paramName, Class<T> objectClass) {
-        return (T) RequestUtil.convertByClass(request.getParameter(paramName), objectClass);
+        return (T) RequestUtil.convertByClass(request.getParameter(paramName), null, objectClass);
     }
 
     private <T extends Object> T getObjectParamByJson(Class<T> objectClass) {
@@ -155,7 +155,7 @@ public class RequestHolder {
                 field.setAccessible(true);
                 String value = request.getParameter(field.getName());
                 if (value != null) {
-                    field.set(t, RequestUtil.convertByClass(value, field.getType()));
+                    field.set(t, RequestUtil.convertByClass(value, field, field.getType()));
                 }
             }
             return t;

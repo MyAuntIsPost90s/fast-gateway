@@ -2,6 +2,7 @@ package com.ch.web.gateway.interceptor;
 
 import com.ch.web.gateway.boot.FastGatewayContext;
 import com.ch.web.gateway.response.ResponseHolder;
+import com.ch.web.gateway.session.SessionHolder;
 import com.ch.web.gateway.session.UserSession;
 import com.ch.web.gateway.util.RequestUtil;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -28,6 +29,7 @@ public class BaseInterceptor implements HandlerInterceptor {
                 return false;
             }
         }
+        setSessionHolder(request, response);
         return true;
     }
 
@@ -42,5 +44,9 @@ public class BaseInterceptor implements HandlerInterceptor {
                 "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, AppKey, AccessToken");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("XDomainRequestAllowed", "1");
+    }
+
+    private void setSessionHolder(HttpServletRequest request, HttpServletResponse response) {
+        SessionHolder.loadSessionHolder(request, response);
     }
 }
