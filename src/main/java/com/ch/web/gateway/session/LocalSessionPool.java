@@ -77,7 +77,6 @@ public class LocalSessionPool extends BaseSessionPool {
      **/
     private void initSessionPool() {
         sessions = CacheBuilder.newBuilder()
-                .softValues()
                 .maximumSize(this.maxSessionSize) // 设置缓存的最大容量
                 .expireAfterAccess(this.sessionLiveTime, TimeUnit.MILLISECONDS) // 设置缓存过期时间
                 .concurrencyLevel(5) // 设置5个区块同时操作
