@@ -27,7 +27,7 @@ public class SessionHolder {
 
     private String accessToken;
 
-    private final static ThreadLocal<SessionHolder> threadLocal;
+    private static volatile ThreadLocal<SessionHolder> threadLocal;
 
     static {
         threadLocal = new ThreadLocal<>();
@@ -47,7 +47,9 @@ public class SessionHolder {
             throw new IllegalArgumentException("response not set null");
         }
         SessionHolder sessionHolder = new SessionHolder(request, response);
-        threadLocal.set(sessionHolder);
+        synchronized (threadLocal) { // threadLocal.set 存在 hash table resize
+            threadLocal.set(sessionHolder);
+        }
     }
 
     public static SessionHolder currentSessionHolder() {
