@@ -47,9 +47,7 @@ public class SessionHolder {
             throw new IllegalArgumentException("response not set null");
         }
         SessionHolder sessionHolder = new SessionHolder(request, response);
-        synchronized (threadLocal) { // threadLocal.set 存在 hash table resize
-            threadLocal.set(sessionHolder);
-        }
+        threadLocal.set(sessionHolder);
     }
 
     public static SessionHolder currentSessionHolder() {
