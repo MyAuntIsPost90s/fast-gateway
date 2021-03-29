@@ -16,6 +16,21 @@ import javax.servlet.http.HttpServletResponse;
  **/
 public class AuthorityInterceptor implements HandlerInterceptor {
 
+    private CallBack illegalCallBack;
+    private CallBack expiredCallBack;
+
+    public static interface CallBack {
+        void invoke(HttpServletRequest request, HttpServletResponse response);
+    }
+
+    public AuthorityInterceptor() {
+    }
+
+    public AuthorityInterceptor(CallBack illegalCallBack, CallBack expiredCallBack) {
+        this.illegalCallBack = illegalCallBack;
+        this.expiredCallBack = expiredCallBack;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (!checkAuthority(request, response)) {  // 校验权限
@@ -28,13 +43,21 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         String accessToken = RequestUtil.getAccessToken(request);
         ResponseHolder responseHolder = ResponseHolder.get(response);
         if (accessToken == null || accessToken.isEmpty()) {
-            responseHolder.fail(AuthorityEnum.AuthoritySate.ILLEGAL.msg, AuthorityEnum.AuthoritySate.ILLEGAL.msgCode);
+            if (illegalCallBack == null) {
+                responseHolder.fail(AuthorityEnum.AuthoritySate.ILLEGAL.msg, AuthorityEnum.AuthoritySate.ILLEGAL.msgCode);
+            } else {
+                illegalCallBack.invoke(request, response);
+            }
             return false;
         }
         FastGatewayContext fastGatewayContext = FastGatewayContext.getCurrentContext();
         UserSession userSession = fastGatewayContext.getSessionPool().get(accessToken);
         if (userSession == null) {
-            responseHolder.fail(AuthorityEnum.AuthoritySate.EXPIRED.msg, AuthorityEnum.AuthoritySate.EXPIRED.msgCode);
+            if (expiredCallBack == null) {
+                responseHolder.fail(AuthorityEnum.AuthoritySate.EXPIRED.msg, AuthorityEnum.AuthoritySate.EXPIRED.msgCode);
+            } else {
+                expiredCallBack.invoke(request, response);
+            }
             return false;
         }
         return true;
